@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Sign Up - GigBridge</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="navbar">
+        <label>GigBridge</label>
+        <a href="index.html">Home</a>
+        <a href="login.html">Login</a>
+    </div>
+
+    <div class="auth-wrapper">
+        <div class="auth-container">
+            <h2 style="color: #1b263b;">Customer Sign Up</h2>
+            <form id="consumerSignupForm">
+                <label>Name:
+                    <input type="text" id="cName" placeholder="Full Name" required/>
+                </label>
+                <label>Phone:
+                    <input type="text" id="cPhone" placeholder="Phone Number" required/>
+                </label>
+                <label>Complete Address:
+                    <textarea id="cAddress" rows="2" placeholder="Flat/House No., Building, Street, Area" required></textarea>
+                </label>
+                <label>Pincode:
+                    <input type="text" id="cPincode" placeholder="E.g., 421301" pattern="[0-9]{6}" title="Enter a valid 6-digit pincode" required/>
+                </label>
+                <label>Email:
+                    <input type="email" id="cEmail" placeholder="Email Address" required/>
+                </label>
+                <label>Password:
+                    <input type="password" id="cPassword" placeholder="Create Password" required/>
+                </label>
+                <button type="submit" class="btn consumer-btn">Create Customer Account</button>
+            </form>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

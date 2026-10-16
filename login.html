@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GigBridge</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="navbar">
+        <label>GigBridge</label>
+        <a href="index.html">Home</a>
+        <div class="dropdown">
+            <button class="dropbtn">Sign Up ▼</button>
+            <div class="dropdown-content">
+                <a href="consumer-signup.html">Customer Sign Up</a>
+                <a href="worker-signup.html">Worker Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-wrapper">
+        <div class="auth-container">
+            <h2>Welcome Back</h2>
+            <form id="loginForm">
+                <label>Email:
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required/>
+                </label>
+                <label>Password:
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required/>
+                </label>
+                <button type="submit" class="btn consumer-btn">Login</button>
+            </form>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #666;">
+                New here? Sign up as a 
+                <a href="consumer-signup.html" style="color: #1b263b; font-weight: bold;">Customer</a> or 
+                <a href="worker-signup.html" style="color: #e67e22; font-weight: bold;">Worker</a>
+            </p>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

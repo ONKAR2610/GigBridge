@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - GigBridge</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="navbar">
+        <label>GigBridge - Customer</label>
+        <button id="openProfileBtn" class="btn btn-accent">My Profile</button>
+        <button id="logoutBtn" class="btn btn-danger" style="margin-left: 12px;">Logout</button>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-grid">
+            <!-- Left Column: Request a Worker -->
+            <div class="dashboard-col-left">
+                <div class="card">
+                    <h2 style="color: #112233; margin-bottom: 18px;">Request a Worker</h2>
+                    <form id="jobRequestForm">
+                        <label>Job Description
+                            <textarea id="jobDesc" rows="3" placeholder="E.g., Broken pipe in kitchen leaking under the sink" required></textarea>
+                        </label>
+
+                        <label>Service Category
+                            <input type="hidden" id="jobCategory" required>
+                            <div id="jobCategoryGrid" class="category-grid">
+                                <!-- Dynamically populated with category tiles by app.js -->
+                            </div>
+                        </label>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Broadcast Request</button>
+                    </form>
+                    <div id="jobStatusOutput" style="display: none; margin-top: 15px; padding: 12px; background: #eef8f3; border-left: 4px solid #27ae60; border-radius: 4px; font-size: 14px;"></div>
+                </div>
+            </div>
+
+            <!-- Right Column: My Job History with Status Filter -->
+            <div class="dashboard-col-right">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h2 class="dashboard-title" style="margin-bottom: 0;">My Job History</h2>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="historyFilterSelect" style="color: white; font-size: 14px; font-weight: 600;">Filter:</label>
+                        <select id="historyFilterSelect" style="width: auto; padding: 8px 14px; font-size: 14px; font-weight: 600; border-radius: 6px; border: none; cursor: pointer;">
+                            <option value="All">All Jobs</option>
+                            <option value="Open">Open</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="jobHistoryFeed">
+                    <div class="card">Loading your job history...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Profile Pop-up Modal (No Services Offered field) -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeProfileBtn">&times;</span>
+            <h2 style="color: #1b263b; margin-bottom: 20px;">My Customer Profile</h2>
+            <form id="profileForm">
+                <label>Name:
+                    <input type="text" id="profileName" required/>
+                </label>
+                <label>Phone:
+                    <input type="text" id="profilePhone" required/>
+                </label>
+                <label>Complete Address:
+                    <textarea id="profileAddress" rows="2" placeholder="Flat/House No., Building, Street, Area" required></textarea>
+                </label>
+                <label>Pincode:
+                    <input type="text" id="profilePincode" placeholder="6-digit Pincode" pattern="[0-9]{6}" title="Enter a valid 6-digit pincode" required/>
+                </label>
+                <button type="submit" class="btn consumer-btn" style="margin-top: 10px;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Sign Up - GigBridge</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="navbar">
+        <label>GigBridge</label>
+        <a href="index.html">Home</a>
+        <a href="login.html">Login</a>
+    </div>
+
+    <div class="auth-wrapper">
+        <div class="auth-container">
+            <h2 style="color: #e67e22;">Worker Sign Up</h2>
+            <form id="workerSignupForm">
+                <label>Name:
+                    <input type="text" id="wName" placeholder="Full Name" required/>
+                </label>
+                <label>Phone:
+                    <input type="text" id="wPhone" placeholder="Phone Number" required/>
+                </label>
+                <label>Complete Address:
+                    <textarea id="wAddress" rows="2" placeholder="Shop/House No., Street, Area" required></textarea>
+                </label>
+                <label>Service Pincode:
+                    <input type="text" id="wPincode" placeholder="E.g., 421301" pattern="[0-9]{6}" title="Enter a valid 6-digit pincode" required/>
+                </label>
+                <label>Select Your Skill(s) (Hold Ctrl/Cmd for multiple):
+                    <select id="wCategory" multiple required>
+                        <option value="" disabled>Loading categories...</option>
+                    </select>
+                </label>
+                <label>Email:
+                    <input type="email" id="wEmail" placeholder="Email Address" required/>
+                </label>
+                <label>Password:
+                    <input type="password" id="wPassword" placeholder="Create Password" required/>
+                </label>
+                <button type="submit" class="btn worker-btn">Create Worker Account</button>
+            </form>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

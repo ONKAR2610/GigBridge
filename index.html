@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GigBridge - Welcome</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="navbar">
+        <label>GigBridge</label>
+        <a href="index.html">Home</a>
+        <a href="login.html">Login</a>
+        
+        <div class="dropdown">
+            <button class="dropbtn">Sign Up ▼</button>
+            <div class="dropdown-content">
+                <a href="consumer-signup.html">Customer Sign Up</a>
+                <a href="worker-signup.html">Worker Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="split-container">
+        <div class="split consumer-side">
+            <h2>I Need a Service</h2>
+            <p>Find local plumbers, carpenters, and electricians instantly.</p>
+            <button class="btn consumer-btn" onclick="window.location.href='login.html'">Customer Login</button>
+        </div>
+
+        <div class="split worker-side">
+            <h2>I Want to Work</h2>
+            <p>Accept local gig requests and manage your availability.</p>
+            <button class="btn worker-btn" onclick="window.location.href='login.html'">Worker Login</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

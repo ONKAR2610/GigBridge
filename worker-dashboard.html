@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard - GigBridge</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="navbar" style="background-color: #112233; color: white;">
+        <label style="color: white;">GigBridge - Worker</label>
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+            <span id="onlineBadge" class="online-pill offline">● OFFLINE</span>
+            <button id="toggleStatusBtn" class="btn btn-accent">Go Online</button>
+            <button id="openProfileBtn" class="btn btn-outline" style="color: white; border-color: #e67e22;">My Profile</button>
+            <button id="logoutBtn" class="btn btn-primary" style="border: 1px solid #445566;">Logout</button>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-grid">
+            <!-- Left Column: Worker Profile Summary -->
+            <div class="dashboard-col-left" style="flex: 0.8;">
+                <div class="card" style="background-color: #1b263b; color: white; border: 1px solid #2c3e50;">
+                    <p style="font-size: 14px; color: #aab8c2;">Welcome,</p>
+                    <h3 id="workerDisplayName" style="color: white; font-size: 24px; margin: 4px 0 12px 0;">Worker</h3>
+                    <p style="font-size: 14px; margin-bottom: 8px;">
+                        <strong>Roles:</strong> <span id="workerDisplaySkills">Loading...</span>
+                    </p>
+                    <p style="font-size: 14px; margin-bottom: 8px;">
+                        <strong>Service Pincode:</strong> <span id="workerDisplayPincode">Loading...</span>
+                    </p>
+                    <p style="font-size: 14px;">
+                        <strong>Status:</strong> <span id="workerDisplayStatus" style="color: #e74c3c; font-weight: bold;">Offline</span>
+                    </p>
+                    <button id="editSkillsBtn" class="btn btn-outline" style="margin-top: 18px; width: 100%; border-color: white; color: white;">Edit Profile & Skills</button>
+                </div>
+            </div>
+
+            <!-- Right Column: Live Job Feed & Job History -->
+            <div class="dashboard-col-right" style="flex: 1.6;">
+                <h2 class="dashboard-title">Local Job Feed <span style="color: #2ecc71; font-size: 16px;">⚡ Matching Your Pincode & Skills</span></h2>
+                <div id="jobFeed">
+                    <div class="card">You are currently offline. Click "Go Online" to see local job requests in your pincode.</div>
+                </div>
+
+                <h2 class="dashboard-title" style="margin-top: 35px;">My Assigned & Completed Jobs</h2>
+                <div id="jobHistoryFeed">
+                    <div class="card">Loading your job history...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Worker Profile Pop-up Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeProfileBtn">&times;</span>
+            <h2 style="color: #1b263b; margin-bottom: 20px;">Edit Worker Profile</h2>
+            <form id="profileForm">
+                <label>Name:
+                    <input type="text" id="profileName" required/>
+                </label>
+                <label>Phone:
+                    <input type="text" id="profilePhone" required/>
+                </label>
+                <label>Complete Address:
+                    <textarea id="profileAddress" rows="2" placeholder="Shop/House No., Street, Area" required></textarea>
+                </label>
+                <label>Service Pincode:
+                    <input type="text" id="profilePincode" placeholder="6-digit Pincode" pattern="[0-9]{6}" title="Enter a valid 6-digit pincode" required/>
+                </label>
+                <div id="extraProfileField"></div>
+                <button type="submit" class="btn worker-btn" style="margin-top: 10px;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
