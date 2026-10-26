@@ -23,14 +23,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (wCategorySelect || jobCategoryGrid) {
         const { data: categories } = await db.from('service_category').select('*');
         if (categories && categories.length > 0) {
-            // 1. Populate Worker Signup multi-select
             if (wCategorySelect) {
                 wCategorySelect.innerHTML = categories.map(c =>
                     `<option value="${c.category_id}">${c.category_name}</option>`
                 ).join('');
             }
 
-            // 2. Populate Customer Dashboard Category Icon Tiles
             if (jobCategoryGrid && jobCategoryInput) {
                 jobCategoryInput.value = categories[0].category_id;
                 jobCategoryGrid.innerHTML = categories.map((c, idx) => `
@@ -157,7 +155,7 @@ if (logoutBtn) {
     });
 }
 
-// --- CONSUMER: SUBMIT JOB REQUEST (BROADCASTS CUSTOMER PINCODE & ADDRESS) ---
+// --- CONSUMER: SUBMIT JOB REQUEST ---
 const jobRequestForm = document.getElementById('jobRequestForm');
 if (jobRequestForm) {
     jobRequestForm.addEventListener('submit', async (e) => {
@@ -248,6 +246,7 @@ if (toggleStatusBtn && jobFeed) {
 
         await refreshWorkerSummaryCard();
 
+        // CHECK TRUE STATUS FROM DATABASE ON RELOAD
         const { data: worker } = await db.from('worker').select('availability_status').eq('worker_id', user.id).maybeSingle();
         if (worker && worker.availability_status === 'Open') {
             isOnline = true;
@@ -340,19 +339,6 @@ if (toggleStatusBtn && jobFeed) {
             </div>
         `).join('');
     };
-<<<<<<< HEAD
-=======
-
-    // Live Updates using Supabase Realtime
-    db.channel('public:job_request')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'job_request' }, () => {
-          if (isOnline && typeof window.fetchAvailableJobs === "function") {
-              window.fetchAvailableJobs(); 
-          }
-          loadJobHistory();
-      })
-      .subscribe();
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
 }
 
 // --- WORKER ACTIONS: ACCEPT & DECLINE ---
@@ -369,11 +355,7 @@ window.acceptJob = async function(jobId) {
     if (error) {
         alert("Error accepting job: " + error.message);
     } else {
-<<<<<<< HEAD
-        alert("Job Accepted successfully! You can now view the customer's contact details in your job history.");
-=======
-        alert("Job Accepted successfully!");
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
+        alert("Job Accepted successfully! You can now view customer details in your history.");
         if (typeof window.fetchAvailableJobs === "function") window.fetchAvailableJobs(); 
         loadJobHistory(); 
     }
@@ -421,13 +403,8 @@ async function loadUserProfile() {
     const { data: consumer } = await db.from('consumer').select('*').eq('consumer_id', user.id).maybeSingle();
     const { data: worker } = await db.from('worker').select('*').eq('worker_id', user.id).maybeSingle();
 
-<<<<<<< HEAD
     const extraField = document.getElementById('extraProfileField') || document.getElementById('workerSkillsField');
     const isWorkerPage = window.location.pathname.includes('worker-dashboard') || !!extraField;
-=======
-    // Determine role by database record or current dashboard page
-    const isWorkerPage = window.location.pathname.includes('worker-dashboard') || !!document.getElementById('extraProfileField');
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
     const profileData = isWorkerPage ? (worker || consumer) : (consumer || worker);
 
     if (profileData) {
@@ -437,11 +414,6 @@ async function loadUserProfile() {
         document.getElementById('profilePincode').value = profileData.pincode || '';
     }
 
-    // Populate multi-select skills ONLY on the Worker Dashboard
-<<<<<<< HEAD
-=======
-    const extraField = document.getElementById('extraProfileField');
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
     if (extraField) {
         const { data: categories } = await db.from('service_category').select('*');
         const userCategories = (profileData && profileData.category_ids) ? profileData.category_ids : []; 
@@ -457,7 +429,6 @@ async function loadUserProfile() {
     }
 }
 
-// Top-level submit listener guarantees Save Changes always fires, alerts, and closes the modal
 if (profileForm) {
     profileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -474,19 +445,10 @@ if (profileForm) {
         const address = document.getElementById('profileAddress').value.trim();
         const pincode = document.getElementById('profilePincode').value.trim();
 
-<<<<<<< HEAD
         const extraField = document.getElementById('extraProfileField') || document.getElementById('workerSkillsField');
         const isWorkerDashboard = !!extraField;
 
         if (!isWorkerDashboard) {
-            // Save Customer Profile
-=======
-        const extraField = document.getElementById('extraProfileField');
-        const isWorkerDashboard = !!extraField;
-
-        if (!isWorkerDashboard) {
-            // Save Customer Profile (No services offered field)
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
             const { error } = await db.from('consumer').upsert([{ 
                 consumer_id: user.id,
                 name: name, 
@@ -503,7 +465,6 @@ if (profileForm) {
                 if (profileModal) profileModal.style.display = 'none';
             }
         } else {
-            // Save Worker Profile & Skills
             const categorySelect = document.getElementById('profileCategory');
             const selectedCategoryIds = categorySelect ? Array.from(categorySelect.selectedOptions).map(opt => opt.value) : [];
             
@@ -530,18 +491,7 @@ if (profileForm) {
     });
 }
 
-<<<<<<< HEAD
-// --- UNIFIED JOB HISTORY, TWO-WAY CONTACT INFO & CLOSE JOB LOGIC ---
-=======
-// --- UNIFIED JOB HISTORY & STATUS FILTER TRACKER ---
-const historyFilterSelect = document.getElementById('historyFilterSelect');
-if (historyFilterSelect) {
-    historyFilterSelect.addEventListener('change', () => {
-        loadJobHistory();
-    });
-}
-
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
+// --- UNIFIED JOB HISTORY & REAL-TIME SYNC ---
 async function loadJobHistory() {
     const historyContainer = document.getElementById('jobHistoryFeed');
     if (!historyContainer) return; 
@@ -549,14 +499,11 @@ async function loadJobHistory() {
     const { data: { user } } = await db.auth.getUser();
     if (!user) return;
 
-<<<<<<< HEAD
-    // 1. Determine whether current view is Customer Dashboard or Worker Dashboard
     const { data: consumer } = await db.from('consumer').select('consumer_id').eq('consumer_id', user.id).maybeSingle();
     const isWorkerDashboard = !!document.getElementById('toggleStatusBtn');
     const isConsumer = !isWorkerDashboard && !!consumer;
     const roleColumn = isConsumer ? 'consumer_id' : 'worker_id';
 
-    // 2. Fetch jobs with relational join for Category, Accepted Worker, and Customer details
     let query = db.from('job_request')
         .select(`
             *,
@@ -567,27 +514,8 @@ async function loadJobHistory() {
         .eq(roleColumn, user.id)
         .order('job_id', { ascending: false });
 
-    // 3. Apply status filter if selected on Customer Dashboard
     const filterSelect = document.getElementById('historyFilterSelect');
     if (isConsumer && filterSelect && filterSelect.value !== 'All') {
-=======
-    const { data: consumer } = await db.from('consumer').select('consumer_id').eq('consumer_id', user.id).maybeSingle();
-    const isWorkerDashboard = !!document.getElementById('toggleStatusBtn');
-    const roleColumn = (!isWorkerDashboard && consumer) ? 'consumer_id' : 'worker_id';
-
-    const { data: categories } = await db.from('service_category').select('*');
-    const catMap = {};
-    if (categories) categories.forEach(c => catMap[c.category_id] = c.category_name);
-
-    let query = db.from('job_request')
-        .select('*')
-        .eq(roleColumn, user.id)
-        .order('job_status', { ascending: false });
-
-    // Apply status filter if selected on Customer Dashboard
-    const filterSelect = document.getElementById('historyFilterSelect');
-    if (filterSelect && filterSelect.value !== 'All') {
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
         query = query.eq('job_status', filterSelect.value);
     }
 
@@ -599,139 +527,72 @@ async function loadJobHistory() {
     }
 
     if (!jobs || jobs.length === 0) {
-        const activeFilter = (filterSelect && filterSelect.value !== 'All') ? ` with status "${filterSelect.value}"` : '';
-        historyContainer.innerHTML = `<div class="card" style="color: #666;">No jobs found${activeFilter}.</div>`;
+        historyContainer.innerHTML = `<div class="card" style="color: #666;">No jobs found in your history.</div>`;
         return;
     }
 
-<<<<<<< HEAD
-    // 4. Render Job History Cards with Contact Info & Action Buttons
     historyContainer.innerHTML = jobs.map(job => {
         const statusLower = (job.job_status || 'Open').toLowerCase();
         const catName = job.service_category?.category_name || 'Service';
 
-        // Contact Info Box for Customer (shows Accepted Worker's Name & Phone)
         let contactDetailsHTML = '';
         if (isConsumer && (job.job_status === 'Assigned' || job.job_status === 'Completed') && job.worker) {
             contactDetailsHTML = `
-                <div class="contact-info-box" style="margin-top: 12px; padding: 12px 15px; background-color: #eef6ff; border-left: 4px solid #3498db; border-radius: 6px; font-size: 14px; color: #1b263b; line-height: 1.6;">
-                    <strong>👷 Accepted Worker Contact Info:</strong><br>
-                    <strong>Name:</strong> ${job.worker.name}<br>
-                    <strong>Phone:</strong> <a href="tel:${job.worker.phone_number}" style="color: #e67e22; font-weight: bold; text-decoration: none;">${job.worker.phone_number}</a> (Click to Call)
-                </div>
-            `;
+                <div style="margin-top: 12px; padding: 12px 15px; background-color: #eef6ff; border-left: 4px solid #3498db; border-radius: 6px; font-size: 14px; color: #1b263b;">
+                    <strong>👷 Assigned Worker:</strong> ${job.worker.name} | <strong>Phone:</strong> <a href="tel:${job.worker.phone_number}">${job.worker.phone_number}</a>
+                </div>`;
         }
-
-        // Contact Info Box for Worker (shows Customer's Name, Phone & Address)
         if (!isConsumer && (job.job_status === 'Assigned' || job.job_status === 'Completed') && job.consumer) {
             contactDetailsHTML = `
-                <div class="contact-info-box" style="margin-top: 12px; padding: 12px 15px; background-color: #eef6ff; border-left: 4px solid #3498db; border-radius: 6px; font-size: 14px; color: #1b263b; line-height: 1.6;">
-                    <strong>🏠 Customer Contact Info:</strong><br>
-                    <strong>Name:</strong> ${job.consumer.name}<br>
-                    <strong>Phone:</strong> <a href="tel:${job.consumer.phone_number}" style="color: #e67e22; font-weight: bold; text-decoration: none;">${job.consumer.phone_number}</a> (Click to Call)<br>
+                <div style="margin-top: 12px; padding: 12px 15px; background-color: #eef6ff; border-left: 4px solid #3498db; border-radius: 6px; font-size: 14px; color: #1b263b;">
+                    <strong>🏠 Customer:</strong> ${job.consumer.name} | <strong>Phone:</strong> <a href="tel:${job.consumer.phone_number}">${job.consumer.phone_number}</a><br>
                     <strong>Address:</strong> ${job.address || job.consumer.address} (Pincode: ${job.pincode || job.consumer.pincode})
-                </div>
-            `;
+                </div>`;
         }
 
-        // Customer Action: Close / Cancel Job button (available if Open or Assigned)
         let actionButtonsHTML = '';
         if (isConsumer && (job.job_status === 'Open' || job.job_status === 'Assigned')) {
-            actionButtonsHTML = `
-                <div style="margin-top: 12px;">
-                    <button onclick="closeJobRequest('${job.job_id}')" class="btn btn-danger" style="padding: 8px 16px; font-size: 13px; background-color: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                        ✖ Close / Cancel Job
-                    </button>
-                </div>
-            `;
+            actionButtonsHTML = `<div style="margin-top: 12px;"><button onclick="closeJobRequest('${job.job_id}')" class="btn btn-danger" style="padding: 6px 14px; font-size: 13px;">✖ Cancel Job</button></div>`;
         }
-
-        // Worker Action: Mark as Completed button (available if Assigned)
         if (!isConsumer && job.job_status === 'Assigned') {
-            actionButtonsHTML = `
-                <div style="margin-top: 12px;">
-                    <button onclick="updateJobStatus('${job.job_id}', 'Completed')" class="btn worker-btn" style="padding: 8px 16px; font-size: 13px; width: auto;">
-                        ✔ Mark as Completed
-                    </button>
-                </div>
-            `;
+            actionButtonsHTML = `<div style="margin-top: 12px;"><button onclick="updateJobStatus('${job.job_id}', 'Completed')" class="btn worker-btn" style="padding: 6px 14px; font-size: 13px;">✔ Mark as Completed</button></div>`;
         }
 
-=======
-    historyContainer.innerHTML = jobs.map(job => {
-        const statusLower = (job.job_status || 'open').toLowerCase();
-        const catName = catMap[job.category_id] || 'Service';
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
         return `
             <div class="history-card ${statusLower}">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <p style="font-size: 16px;"><strong>${catName}:</strong> ${job.description}</p>
                     <span class="status-badge ${statusLower}">${job.job_status}</span>
                 </div>
-                <p style="font-size: 13px; color: #555; margin-top: 6px;">
-                    <strong>Address:</strong> ${job.address || 'N/A'} | <strong>Pincode:</strong> ${job.pincode || 'N/A'}
-                </p>
-                <p style="font-size: 12px; color: #888; margin-top: 4px;">Job ID: ${job.job_id.substring(0, 8)}...</p>
-                
-<<<<<<< HEAD
+                <p style="font-size: 13px; color: #555; margin-top: 6px;"><strong>Pincode:</strong> ${job.pincode || 'N/A'}</p>
                 ${contactDetailsHTML}
                 ${actionButtonsHTML}
-=======
-                ${job.job_status === 'Assigned' && isWorkerDashboard ? 
-                    `<button onclick="updateJobStatus('${job.job_id}', 'Completed')" class="btn worker-btn" style="padding: 8px 16px; margin-top: 12px; font-size: 13px;">Mark as Completed</button>` 
-                : ''}
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
             </div>
         `;
     }).join('');
 }
 
-<<<<<<< HEAD
-// --- CUSTOMER ACTION: CLOSE / CANCEL JOB REQUEST ---
 window.closeJobRequest = async function(jobId) {
-    const confirmCancel = confirm("Are you sure you want to close/cancel this job request?");
-    if (!confirmCancel) return;
-
-    const { error } = await db.from('job_request')
-        .update({ job_status: 'Closed' })
-        .eq('job_id', jobId);
-
-    if (error) {
-        alert("Error closing job: " + error.message);
-    } else {
-        alert("Job request has been closed.");
-        loadJobHistory(); 
-    }
+    if (!confirm("Are you sure you want to cancel this job?")) return;
+    const { error } = await db.from('job_request').update({ job_status: 'Closed' }).eq('job_id', jobId);
+    if (error) alert("Error: " + error.message);
+    else loadJobHistory();
 };
 
-// --- WORKER ACTION: UPDATE JOB STATUS (E.G., COMPLETED) ---
-=======
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
 window.updateJobStatus = async function(jobId, newStatus) {
-    const { error } = await db.from('job_request')
-        .update({ job_status: newStatus })
-        .eq('job_id', jobId);
-        
-    if (error) {
-        alert("Error updating job: " + error.message);
-    } else {
-        loadJobHistory(); 
-    }
+    const { error } = await db.from('job_request').update({ job_status: newStatus }).eq('job_id', jobId);
+    if (error) alert("Error: " + error.message);
+    else loadJobHistory();
 };
 
-<<<<<<< HEAD
-// --- INITIALIZE JOB HISTORY, FILTER LISTENER & REAL-TIME SYNC ---
 document.addEventListener("DOMContentLoaded", () => {
     loadJobHistory();
 
     const historyFilterSelect = document.getElementById('historyFilterSelect');
     if (historyFilterSelect) {
-        historyFilterSelect.addEventListener('change', () => {
-            loadJobHistory();
-        });
+        historyFilterSelect.addEventListener('change', () => loadJobHistory());
     }
 
-    // Real-time listener for both Customer & Worker dashboards
     db.channel('public:job_request_realtime')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'job_request' }, () => {
             loadJobHistory();
@@ -740,8 +601,4 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         })
         .subscribe();
-=======
-document.addEventListener("DOMContentLoaded", () => {
-    loadJobHistory();
->>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
 });
