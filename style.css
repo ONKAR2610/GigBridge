@@ -417,4 +417,40 @@ select[multiple] option:checked {
         flex-direction: column;
         margin: 20px;
     }
+<<<<<<< HEAD
+}
+
+/* Closed / Cancelled Job Styling */
+.history-card.closed {
+    border-left-color: #95a5a6;
+    opacity: 0.85;
+}
+
+.status-badge.closed, .badge.closed {
+    background: #7f8c8d;
+    color: white;
+}
+
+/* Contact Details Box for Assigned/Completed Jobs */
+.contact-info-box {
+    margin-top: 12px;
+    padding: 12px 15px;
+    background-color: #eef6ff;
+    border-left: 4px solid #3498db;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1b263b;
+    line-height: 1.6;
+}
+
+.contact-info-box a {
+    color: #e67e22;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.contact-info-box a:hover {
+    text-decoration: underline;
+=======
+>>>>>>> 9724060dc33f5ac885a06aafc498de458f33252c
 }
